@@ -1,0 +1,5 @@
+[
+  "tests/test_client.py::test_create_short_link_sends_signed_openapi_request",
+  "tests/test_signer.py::test_golden_signing_vector_matches_node",
+  "tests/test_signer.py::test_normalizes_literal_newlines_and_rejects_secret_handle"
+]

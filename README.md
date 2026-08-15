@@ -1,5 +1,7 @@
 # taqlyn-sdk
 
+**Full guide:** [Python](../../apps/docs/content/server/python.md) on the docs site.
+
 Taqlyn **server** SDK for Python. Signs privileged REST with an Ed25519
 **private key** (never send `sk_*` alone — use the PKCS#8 PEM issued once when
 credentials are created).

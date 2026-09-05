@@ -28,7 +28,9 @@ python -m pip install -e .
 ## Quickstart — create a short link
 
 ```bash
-export TAQLYN_BASE_URL=https://api.rutvik.qzz.io
+# Optional override: defaults to https://api.taqlyn.com in production
+# export TAQLYN_BASE_URL=https://api.taqlyn.com
+
 export TAQLYN_CLIENT_ID=app_test_...          # from Keys.issue (sandbox)
 export TAQLYN_PRIVATE_KEY='-----BEGIN PRIVATE KEY-----
 ...
@@ -40,8 +42,8 @@ import os
 
 from taqlyn import TaqlynClient
 
+# Zero-config: base_url defaults to TAQLYN_BASE_URL env var or "https://api.taqlyn.com"
 client = TaqlynClient(
-    base_url=os.environ["TAQLYN_BASE_URL"],
     client_id=os.environ["TAQLYN_CLIENT_ID"],
     private_key=os.environ["TAQLYN_PRIVATE_KEY"],  # PKCS#8 PEM (not sk_*)
 )

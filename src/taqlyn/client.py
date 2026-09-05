@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import time
 import urllib.error
 import urllib.parse
@@ -12,6 +13,7 @@ from typing import Any, Callable, Dict, Mapping, Optional, Union
 from .errors import TaqlynApiError
 from .signer import load_private_key, signed_headers
 
+DEFAULT_API_BASE_URL = "https://api.taqlyn.com"
 SHORT_LINKS_PATH = "/v1/short-links"
 PrivateKey = Union[str, bytes, bytearray, memoryview]
 
@@ -22,13 +24,19 @@ class TaqlynClient:
     def __init__(
         self,
         *,
-        base_url: str,
         client_id: str,
         private_key: PrivateKey,
+        base_url: Optional[str] = None,
         now: Optional[Callable[[], int]] = None,
         urlopen: Optional[Callable[..., Any]] = None,
     ) -> None:
-        if not base_url or not base_url.strip():
+        raw_url = (
+            base_url
+            or os.environ.get("TAQLYN_BASE_URL")
+            or os.environ.get("TAQLYN_API_URL")
+            or DEFAULT_API_BASE_URL
+        )
+        if not raw_url or not raw_url.strip():
             raise ValueError("base_url is required")
         if not client_id or not client_id.strip():
             raise ValueError("client_id is required")
@@ -36,7 +44,7 @@ class TaqlynClient:
         if not client_id.startswith(("app_test_", "app_live_")):
             raise ValueError("client_id must start with app_test_ or app_live_")
 
-        self.base_url = base_url.rstrip("/")
+        self.base_url = raw_url.rstrip("/")
         self.client_id = client_id
         self._private_key = load_private_key(private_key)
         self._now = now or (lambda: int(time.time()))

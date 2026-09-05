@@ -1,0 +1,58 @@
+name: Publish Python SDK (PyPI)
+
+# PyPI uses 100% Tokenless OIDC Trusted Publishing.
+# When id-token: write is enabled, GitHub Actions mints a short-lived OIDC JWT
+# verified by PyPI. Zero static credentials or API tokens stored in GitHub.
+
+on:
+  release:
+    types: [published]
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+concurrency:
+  group: publish-python-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write # Required for PyPI OIDC token exchange
+
+jobs:
+  publish:
+    name: Build & Publish to PyPI
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/taqlyn-sdk
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install build tools & test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --upgrade build twine pytest
+          python -m pip install -e ".[test]"
+
+      - name: Run test suite
+        run: pytest
+
+      - name: Build sdist and wheel
+        run: python -m build
+
+      - name: Check package distribution
+        run: twine check dist/*
+
+      - name: Publish to PyPI via Trusted Publishing
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/
+          # No username, password, or token required!

@@ -34,6 +34,8 @@ Dynamic: license-file
 
 # taqlyn-sdk
 
+**Full guide:** [Python](../../apps/docs/content/server/python.md) on the docs site.
+
 Taqlyn **server** SDK for Python. Signs privileged REST with an Ed25519
 **private key** (never send `sk_*` alone — use the PKCS#8 PEM issued once when
 credentials are created).
@@ -60,7 +62,9 @@ python -m pip install -e .
 ## Quickstart — create a short link
 
 ```bash
-export TAQLYN_BASE_URL=http://localhost:8080
+# Optional override: defaults to https://api.taqlyn.com in production
+# export TAQLYN_BASE_URL=https://api.taqlyn.com
+
 export TAQLYN_CLIENT_ID=app_test_...          # from Keys.issue (sandbox)
 export TAQLYN_PRIVATE_KEY='-----BEGIN PRIVATE KEY-----
 ...
@@ -72,8 +76,8 @@ import os
 
 from taqlyn import TaqlynClient
 
+# Zero-config: base_url defaults to TAQLYN_BASE_URL env var or "https://api.taqlyn.com"
 client = TaqlynClient(
-    base_url=os.environ["TAQLYN_BASE_URL"],
     client_id=os.environ["TAQLYN_CLIENT_ID"],
     private_key=os.environ["TAQLYN_PRIVATE_KEY"],  # PKCS#8 PEM (not sk_*)
 )
